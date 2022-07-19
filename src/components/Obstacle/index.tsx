@@ -20,8 +20,6 @@ const Obstacle = (props: PropsObstacle) => {
 
   const isTop = props.body.position.y > 0;
 
-  console.log('isTop', isTop, props.body.position.y);
-
   return (
     <S.Container
       left={xBody}

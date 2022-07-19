@@ -39,10 +39,10 @@ const Bird = (props: PropsBird) => {
       left={xBody}
       top={yBody}
       width={widthBody}
-      height={heightBody}
+      height={widthBody}
       background={color}
       rotation={rotation}>
-      <S.Bird source={bird} />
+      <S.Bird source={bird} width={widthBody} height={widthBody} />
     </S.Container>
   );
 };
@@ -61,11 +61,10 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const initialBird = Matter.Bodies.rectangle(
+  const initialBird = Matter.Bodies.circle(
     props.pos.x,
     props.pos.y,
-    props.size.width,
-    props.size.height,
+    Math.sqrt((props.size.width * props.size.width) / Math.PI),
     {label: 'Bird'},
   );
   Matter.World.add(props.world, initialBird);
