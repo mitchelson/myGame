@@ -14,20 +14,17 @@ interface BirdProps {
 
 export const Container = styled.View<BirdProps>`
   position: absolute;
-  /* border-style: solid; */
-  /* border-width: 1px; */
-  border-radius: 40px;
   width: ${props => props.width}px;
   height: ${props => props.width}px;
-  transform: rotate(${props => props.rotation}deg);
   left: ${props => props.left}px;
   right: ${props => props.right}px;
   top: ${props => props.top}px;
   bottom: ${props => props.bottom}px;
-  /* background-color: ${props => props.background}; */
+  align-items: center;
+  justify-content: center;
 `;
 
 export const Bird = styled.ImageBackground`
-  width: ${props => props.width}px;
-  height: ${props => props.width}px;
+  width: ${props => props.width + 4}px;
+  height: ${props => props.width + 4}px;
 `;

@@ -11,7 +11,7 @@ interface FloorProps {
   height: number;
 }
 
-export const Container = styled.ImageBackground<FloorProps>`
+export const Container = styled.View<FloorProps>`
   position: absolute;
   width: ${props => props.width}px;
   height: ${props => props.height}px;
@@ -19,5 +19,9 @@ export const Container = styled.ImageBackground<FloorProps>`
   right: ${props => props.right}px;
   top: ${props => props.top}px;
   bottom: ${props => props.bottom}px;
-  /* background-color: ${props => props.background}; */
+`;
+
+export const Image = styled.Image`
+  width: ${props => props.width}px;
+  margin-top: -35px;
 `;

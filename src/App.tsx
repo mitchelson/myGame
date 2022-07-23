@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Sound from 'react-native-sound';
 import {GameEngine} from 'react-native-game-engine';
 import {Points} from './components/Points';
 import {background} from './assets';
@@ -16,34 +17,48 @@ import Matter from 'matter-js';
 import {getPipeSizePosPair} from './utils/random';
 
 import {Dimensions} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const windowWidth = Dimensions.get('window').width;
+
+const kickSound = new Sound('kick.wav', Sound.MAIN_BUNDLE);
+const collision = new Sound('lost.wav', Sound.MAIN_BUNDLE);
+const start = new Sound('start.wav', Sound.MAIN_BUNDLE);
 
 const App = () => {
   const [running, setRunning] = useState(false);
   const [currentPoints, setCurrentPoints] = useState(0);
   const [gameOver, setGameOver] = useState(false);
-
+  // Sound.setCategory('Playback');
   const [speed, setSpeed] = useState(3);
   const [stepSpeed, setStepSpeed] = useState(0);
-
+  const [bestScore, setBestScore] = useState(0);
   const gameEngineRef = useRef(null);
 
   function startGame() {
+    start.stop();
+    start.play();
     setGameOver(false);
     setCurrentPoints(0);
     setRunning(true);
     gameEngineRef.current.swap(entities());
   }
 
+  useEffect(() => {
+    if (gameOver) {
+      collision.stop();
+      collision.play();
+    }
+  }, [gameOver]);
+
   const Physics = (entities, {touches, time, dispatch}) => {
     let engine = entities.physics.engine;
-
-    console.log('time => ', time.current - time.previous);
 
     touches
       .filter(t => t.type === 'press')
       .forEach(() => {
+        kickSound.stop();
+        kickSound.play();
         Matter.Body.setVelocity(entities.Bird.body, {
           x: 0,
           y: -8,
@@ -102,8 +117,25 @@ const App = () => {
     }
   }, [currentPoints]);
 
+  async function getHighScore() {
+    if (currentPoints > bestScore) {
+      setBestScore(currentPoints);
+      await AsyncStorage.setItem('highScore', currentPoints.toString());
+    }
+  }
+
   useEffect(() => {
+    async function getScore() {
+      const highScore = await AsyncStorage.getItem('highScore');
+      if (highScore) {
+        setBestScore(parseInt(highScore, 10));
+      } else {
+        setBestScore(0);
+        AsyncStorage.setItem('highScore', '0');
+      }
+    }
     setRunning(false);
+    getScore();
   }, []);
 
   return (
@@ -128,6 +160,8 @@ const App = () => {
             case 'game_over':
               setGameOver(true);
               setRunning(false);
+              setSpeed(3);
+              getHighScore();
               gameEngineRef.current.stop();
               break;
             case 'new_point':
@@ -140,7 +174,7 @@ const App = () => {
         <StatusBar barStyle={'default'} hidden={true} />
       </GameEngine>
 
-      {gameOver && <GameOver onPress={startGame} />}
+      {gameOver && <GameOver onPress={startGame} bestScore={bestScore} />}
 
       {!running && !gameOver ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>

@@ -22,10 +22,9 @@ export default () => {
     physics: {engine, world},
 
     Bird: Bird({
-      color: 'green',
+      physics: {engine, world},
       pos: {x: 50, y: 300},
       size: {height: 40, width: 40},
-      world,
     }),
     ObstacleTop1: Obstacle({
       world,

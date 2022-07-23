@@ -1,10 +1,14 @@
-import Matter, {use} from 'matter-js';
+import Matter from 'matter-js';
 import React, {useEffect} from 'react';
 import {bird} from '../../assets';
+import * as Animated from 'react-native-animatable';
 import * as S from './styles';
 
 interface PropsBird {
-  color: string;
+  physics: {
+    engine: Matter.Engine;
+    world: Matter.World;
+  };
   body: Matter.Body;
 }
 
@@ -15,17 +19,15 @@ const Bird = (props: PropsBird) => {
   const xBody = props.body.position.x - widthBody / 2;
   const yBody = props.body.position.y - heightBody / 2;
 
-  const color = props.color;
-
   const [position, setPosition] = React.useState(0);
-
+  const [running, setRunning] = React.useState(true);
   const [rotation, setRotation] = React.useState(0);
 
   function rotationBird() {
     if (props.body.position.y > position) {
       setRotation(30);
     } else {
-      setRotation(-30);
+      setRotation(-20);
     }
   }
 
@@ -34,22 +36,37 @@ const Bird = (props: PropsBird) => {
     setPosition(props.body.position.y);
   }, [props.body.position.y]);
 
+  useEffect(() => {
+    if (props.physics.engine.pairs.collisionStart.length > 0) {
+      setRunning(false);
+    } else {
+      setRunning(true);
+    }
+  }, [props]);
+
   return (
     <S.Container
       left={xBody}
       top={yBody}
       width={widthBody}
       height={widthBody}
-      background={color}
       rotation={rotation}>
-      <S.Bird source={bird} width={widthBody} height={widthBody} />
+      <Animated.View
+        animation={running ? 'rotate' : ''}
+        easing={running ? 'linear' : 'ease-out'}
+        iterationCount={'infinite'}
+        duration={1000}>
+        <S.Bird source={bird} width={widthBody} height={widthBody} />
+      </Animated.View>
     </S.Container>
   );
 };
 
 interface Props {
-  world: Matter.World;
-  color: string;
+  physics: {
+    engine: Matter.Engine;
+    world: Matter.World;
+  };
   pos: {
     x: number;
     y: number;
@@ -67,12 +84,12 @@ export default (props: Props) => {
     Math.sqrt((props.size.width * props.size.width) / Math.PI),
     {label: 'Bird'},
   );
-  Matter.World.add(props.world, initialBird);
+  Matter.World.add(props.physics.world, initialBird);
 
   return {
     body: initialBird,
-    color: props.color,
+    physics: props.physics,
     pos: props.pos,
-    renderer: <Bird body={initialBird} color={props.color} />,
+    renderer: <Bird body={initialBird} physics={props.physics} />,
   };
 };

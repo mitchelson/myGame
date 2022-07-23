@@ -1,6 +1,6 @@
 import Matter from 'matter-js';
 import React from 'react';
-import {Image, ImageBackground} from 'react-native';
+import {Image} from 'react-native';
 import {bottomObstacle, topObstacle} from '../../assets';
 import * as S from './styles';
 
@@ -36,7 +36,7 @@ const Obstacle = (props: PropsObstacle) => {
         style={{
           position: 'absolute',
           width: '100%',
-          height: '35%',
+          height: '33%',
         }}
         source={isTop ? bottomObstacle : topObstacle}
       />

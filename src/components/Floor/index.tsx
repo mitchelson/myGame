@@ -19,15 +19,13 @@ const Floor = (props: PropsFloor) => {
 
   return (
     <S.Container
-      source={floor}
       left={xBody}
       top={yBody}
       width={widthBody}
       height={heightBody}
-      background={color}
-      resizeMethod="auto"
-      resizeMode="stretch"
-    />
+      background={color}>
+      <S.Image source={floor} resizeMethod="auto" resizeMode="stretch" />
+    </S.Container>
   );
 };
 
