@@ -65,6 +65,20 @@ const App = () => {
         });
       });
 
+    touches
+      .filter(t => t.type === 'long-press')
+      .forEach(t => {
+        // kickSound.stop();
+        // kickSound.play();
+        console.log('long press', t);
+        // Matter.Body.setStatic(entities.Bird.body, true);
+        Matter.Body.setMass(entities.Bird.body, 0.1);
+        // Matter.Body.setVelocity(entities.Bird.body, {
+        //   x: 0,
+        //   y: -12,
+        // });
+      });
+
     Matter.Engine.update(engine, time.delta);
 
     for (let index = 1; index <= 2; index++) {
